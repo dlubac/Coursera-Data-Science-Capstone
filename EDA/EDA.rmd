@@ -1,0 +1,126 @@
+---
+title: 'Data Science Capstone: Exploratory Data Analysis'
+author: "Matt Dlubac"
+date: "December 13, 2017"
+output: html_document
+---
+
+```{r echo=TRUE}
+
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+
+## Setup
+First we will load the libraries needed for the analysis.
+```{r echo=TRUE, message=FALSE}
+library(quanteda)
+library(ggplot2)
+```
+
+### Data ingestion
+Read in the english language text files
+```{r echo=TRUE, warning=FALSE}
+blogs <- readLines("../final/en_US/en_US.blogs.txt")
+news <- readLines("../final/en_US/en_US.news.txt")
+twitter <- readLines("../final/en_US/en_US.twitter.txt")
+```
+
+Take a 1% sample of each text file and combine them into a single object
+```{r echo=TRUE}
+subset_blogs <- sample(blogs, size=length(blogs) * 0.01, replace=FALSE)
+subset_news <- sample(news, size=length(news) * 0.01, replace=FALSE)
+subset_twitter <- sample(twitter, size=length(twitter) * 0.01, replace=FALSE)
+
+combined_data <- c(subset_blogs, subset_news, subset_twitter)
+```
+
+### Clean data
+Perform a simple data cleansing by removing all non-alphanumeric characters
+```{r echo=TRUE}
+combined_data <- gsub("[^0-9A-Za-z///' ]", " ", combined_data)
+```
+
+### Transform data to a corpus and Document-Feature Matrix
+```{r echo=TRUE}
+combined_data <- corpus(combined_data)
+dfm_unigram <- dfm(combined_data)
+```
+
+### Exploratory Analysis
+First get the frequency of all words and look at basic statistics
+```{r echo=TRUE}
+words <- topfeatures(dfm_unigram, length(dfm_unigram))
+summary(words)
+```
+
+If we visualize the distribution of word frequency it can be seen that nearly all words appear less than 1000 times.
+```{r echo=TRUE}
+hist(words, breaks=300, xlab="Word Count")
+```
+
+### Find the most frequently occuring words
+The topfeatues function can be used to find the 10 most frequently occuring words
+```{r echo=TRUE}
+top_words_unigram <- topfeatures(dfm_unigram, n=10)
+top_words_unigram <- data.frame(keyName=names(top_words_unigram), value=top_words_unigram, row.names=NULL)
+top_words_unigram <- top_words_unigram[order(-top_words_unigram$value),]
+```
+
+The most common words can be visualized with a wordcloud and bar chart
+```{r echo=TRUE}
+textplot_wordcloud(dfm_unigram, min.freq=500, random.order=FALSE, rot.per=0.25)
+
+unigram_plot <- ggplot(top_words_unigram, aes(x=reorder(top_words_unigram$keyName, -top_words_unigram$value), y=top_words_unigram$value)) + 
+  geom_bar(stat="identity") +
+  ggtitle("Most Common Unigrams") +
+  xlab("Word") +
+  ylab("Occurances")
+
+print(unigram_plot)
+```
+
+### Find the most frequently occuring pairs of words
+```{r echo=TRUE}
+dfm_bigram <- dfm(combined_data, ngrams=2)
+top_words_bigram <- topfeatures(dfm_bigram, n=10)
+top_words_bigram <- data.frame(keyName=names(top_words_bigram), value=top_words_bigram, row.names=NULL)
+top_words_bigram <- top_words_bigram[order(-top_words_bigram$value),]
+```
+
+```{r echo=TRUE}
+bigram_plot <- ggplot(top_words_bigram, aes(x=reorder(top_words_bigram$keyName, -top_words_bigram$value), y=top_words_bigram$value)) + 
+  geom_bar(stat="identity") +
+  ggtitle("Most Common Bigrams") +
+  xlab("Word") +
+  ylab("Occurances")
+
+print(bigram_plot)
+```
+
+### Find the most frequently occuring trios of words
+```{r echo=TRUE}
+dfm_trigram <- dfm(combined_data, ngrams=3)
+top_words_trigram <- topfeatures(dfm_trigram, n=10)
+top_words_trigram <- data.frame(keyName=names(top_words_trigram), value=top_words_trigram, row.names=NULL)
+top_words_trigram <- top_words_trigram[order(-top_words_trigram$value),]
+```
+
+```{r echo=TRUE}
+trigram_plot <- ggplot(top_words_trigram, aes(x=reorder(top_words_trigram$keyName, -top_words_trigram$value), y=top_words_trigram$value)) + 
+  geom_bar(stat="identity") +
+  ggtitle("Most Common Trigrams") +
+  xlab("Word") +
+  ylab("Occurances") +
+  theme(axis.text.x = element_text(angle=45, hjust=1))
+
+print(trigram_plot)
+```
+
+
