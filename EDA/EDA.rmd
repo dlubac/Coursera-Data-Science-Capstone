@@ -1,7 +1,7 @@
 ---
 title: 'Data Science Capstone: Exploratory Data Analysis'
 author: "Matt Dlubac"
-date: "December 13, 2017"
+date: "January 3, 2018"
 output: html_document
 ---
 
@@ -15,7 +15,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Introduction
+This exploratory data analysis is intended to explore data from blogs, news articles, and tweets. The main goals are to look at the basic features of each dataset and explore the frequency of words and groups of words.
 
+Specifically, the following analyses will be done:
+
+* Line counts and example data from each dataset
+* Distribution of word frequency in a combined dataset
+* Visualization and word cloud of most commonly occuring words
+* Visualizations of most commonly occuring pairs and trios of words
+
+Finally a summary of a plan to create a predictive model and shiny app will be provided.
 
 ## Setup
 First we will load the libraries needed for the analysis.
@@ -30,6 +39,27 @@ Read in the english language text files
 blogs <- readLines("../final/en_US/en_US.blogs.txt")
 news <- readLines("../final/en_US/en_US.news.txt")
 twitter <- readLines("../final/en_US/en_US.twitter.txt")
+```
+
+Taking a look at the basic features of each file
+```{r echo=TRUE}
+# Blogs line count:
+length(blogs)
+
+# Blogs sample data:
+sample(blogs, 1)
+
+# News line count:
+length(news)
+
+# News sample data:
+sample(news, 1)
+
+# Twitter line count:
+length(twitter)
+
+# Twitter sample data:
+sample(twitter, 1)
 ```
 
 Take a 1% sample of each text file and combine them into a single object
@@ -123,4 +153,8 @@ trigram_plot <- ggplot(top_words_trigram, aes(x=reorder(top_words_trigram$keyNam
 print(trigram_plot)
 ```
 
+## Prediction Model & Shiny App Development
+The prediction model that will be created as part of this capstone will use parts of this exploratory analysis as its basis. The most common bigrams, trigrams, and quadgrams will first be determined. Those ngrams can then be used to predict the next word in input text by comparing word positions. It will also allow trigrams to be used if a quadgram cannot be found, and bigrams if an trigram cannot be found.
+
+The shiny app will provide a textbox for users to input text data. Depending on the performance of the final prediction model the word prediction will either be done in real time and display the result to the user in a separate textbox or the user will click a button after inputting data to perform the prediction and output. The app will also provide documentation for users.
 
