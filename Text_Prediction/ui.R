@@ -14,13 +14,13 @@ shinyUI(
   navbarPage("Text Prediction",
     tabPanel("Prediction", fluid=TRUE, align="center",
              fluidRow(
-               h4("Input"),
+               h4("Enter a phrase"),
                textInput("userInput", ""),
                actionButton("pred_Button", "Predict")
              ),
              br(),
              fluidRow(
-               h4("Predicted text"),
+               h4("Predicted word"),
                textOutput("pred_ngram")
              )),
     tabPanel("Documentation", fluid=TRUE)

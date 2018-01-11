@@ -29,49 +29,55 @@ fn_create_ngram <- function(corpus_data, ngram){
 }
 
 # Function to predict text
-fn_search <- function(df_lookup, search_term) {
-  input_tokens <- fn_parse_input(search_term)
-  input_length <- length(input_tokens[[1]])
+fn_search <- function(df_lookup, raw_input) {
+  # Setup predictions varible
+  predictions <- df_lookup
   
-  if(input_length == 1) {
-    suggestions <- df_lookup[df_lookup$key1 == input_tokens[[1]][1],]
-    
-  } else if (input_length == 2) {
-    suggestions <- df_lookup[df_lookup$key1 == input_tokens[[1]][1],]
-    suggestions <- suggestions[suggestions$key2 == input_tokens[[1]][2],]
-    suggestions <- suggestions[!is.na(suggestions$key3),]
-    
-  } else if (input_length == 3) {
-    suggestions <- df_lookup[df_lookup$key1 == input_tokens[[1]][1],]
-    suggestions <- suggestions[suggestions$key2 == input_tokens[[1]][2],]
-    suggestions <- suggestions[suggestions$key3 == input_tokens[[1]][3],]
-    suggestions <- suggestions[!is.na(suggestions$key4),]
-  } else {
-    print("No matches found")
-    return(NULL)
+  # Parse input
+  input_tokens <- fn_parse_input(raw_input)
+  
+  # Get length
+  input_length <- length(input_tokens)
+
+  for (i in 1:input_length) {
+    predictions <- predictions[predictions[[i]] == input_tokens[i],]
+    predictions <- predictions[!is.na(predictions[[i + 1]]),]
   }
   
-  if(nrow(suggestions) == 0) {
-    tokens_new <- input_tokens[[1]][-1]
-    search_new <- paste(tokens_new, sep=" ", collapse=" ")
-    fn_search(lookup_table, search_new)
+  if (nrow(predictions) == 0) {
+    search_new <- paste(input_tokens[-1], collapse=" ")
+    search_new(lookup_table, search_new)
   } else {
-    return(suggestions)  
+    return(predictions)
   }
 }
 
 fn_parse_input <- function(input) {
   input <- gsub("[^0-9A-Za-z///' ]", " ", input)
   input_tokens <- tokens(input)
-  token_count <- ntoken(input_tokens)
+  token_count <- length(input_tokens[[1]])
   
-  if (token_count <= 0) {
-    print("Invalid input")
-  } else if (token_count > 3) {
-    input_tokens <- input_tokens[[1]][as.numeric(token_count - 2):token_count]
-  } 
-  
+  if (token_count > 3) {
+    input_tokens <- input_tokens[[1]][as.numeric(token_count-2):token_count]
+  } else {
+    input_tokens <- input_tokens[[1]][1:token_count]
+  }
+
   return(input_tokens)
+}
+
+fn_get_next_token <- function(suggestions){
+  next_token <- NA
+  top_suggestion <- suggestions[1,1:4]
+  
+  for (i in length(top_suggestion):1) {
+    if (!is.na(top_suggestion[[i]])) {
+      next_token <- top_suggestion[[i]]
+      return(as.character(next_token))
+    }
+  }
+  
+  return(next_token)
 }
 
 # Find most common ngrams
