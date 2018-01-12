@@ -11,7 +11,6 @@ library(shiny)
 library(quanteda)
 library(reshape2)
 library(tidyr)
-library(shinyjs)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
@@ -47,12 +46,10 @@ shinyServer(function(input, output, session) {
       predictions <- predictions[!is.na(predictions[[i + 2]]),]
     }
     
-    if (nrow(predictions) == 0) {
-      print(length(input_tokens)) # infinite loop with no matches
-      if (length(input_tokens > 1)) {
-        search_new <- paste(input_tokens[-1], collapse=" ")
-        fn_search(lookup_table, search_new)
-      }
+    if (nrow(predictions) == 0 & length(input_tokens) > 1) {
+      search_new <- paste(input_tokens[-1], collapse=" ")
+      fn_search(lookup_table, search_new)
+
     } else {
       return(predictions)
     }
@@ -62,7 +59,6 @@ shinyServer(function(input, output, session) {
   fn_get_next_token <- function(suggestions){
     next_token <- NA
     top_suggestion <- suggestions[1,2:5]
-    print(top_suggestion)
     
     for (i in length(top_suggestion):1) {
       if (!is.na(top_suggestion[[i]])) {
@@ -73,7 +69,6 @@ shinyServer(function(input, output, session) {
     
     return(next_token)
   }
-  
   
   # Read in ngram lookup data
   withProgress(message = "Loading lookup data", value=1, {
@@ -89,13 +84,14 @@ shinyServer(function(input, output, session) {
     } else {
       # Get text prediction
       predictions <- fn_search(lookup_table, input$userInput)
-      print(head(predictions)) # Remove
       next_token <- fn_get_next_token(predictions)
   
       # Output prediction
-      output$pred_ngram <- renderText(print(next_token))
+      if (is.na(next_token)) {
+        output$pred_ngram <- renderText("No prediction could be made")
+      } else {
+        output$pred_ngram <- renderText(print(next_token))
+      }
     }
-    
   })
-  
 })
