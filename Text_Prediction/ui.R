@@ -23,6 +23,18 @@ shinyUI(
                h4("Predicted word"),
                textOutput("pred_ngram")
              )),
-    tabPanel("Documentation", fluid=TRUE)
+    tabPanel("Documentation", fluid=TRUE,
+             h4("Application Overview"),
+             p("This application allows you to enter a phrase and receive a prediction of the next word in the phrase."),
+             br(),
+             h4("Application Loading"),
+             p("After starting the application please wait until the \"Loading lookup data\" message is no longer displayed in the bottom right corner."),
+             br(),
+             h4("Application Usage"),
+             p("To receive a prediction enter your phrase in the textbox and click the \"Predict\" button. The output will be displayed below the \"Predicted Word\" header."),
+             br(),
+             a("Github Repository", href="https://github.com/dlubac/Coursera-Data-Science-Capstone", target="_blank")
+             
+             )
   )
 )

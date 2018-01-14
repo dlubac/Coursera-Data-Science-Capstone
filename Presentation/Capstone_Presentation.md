@@ -30,9 +30,9 @@ Below is a general outline how the application functions:
   - A notification is displayed while the file is being loaded. The prediction algorithm will not run until the loading is complete.
   
 - When the predict button is clicked:
-  - The entered text is sanitized of all non-alphanumeric characters. If there are no alphanumeric characters a message is displayed and the prediction algorithm is not run.
+  - The entered text is sanitized of all non-alphanumeric characters. If there are no alphanumeric characters a message is displayed and the prediction algorithm is not run
   - If the input is longer than three words only the final three are considered
-  - The final 1-3 words are sent to the prediction algorithm. If a prediction cannot be made the first word is removed and the prediction is run again until there is a successful prediction or no words remain.
+  - The final 1-3 words are sent to the prediction algorithm. If a prediction cannot be made the first word is removed and the prediction is run again until there is a successful prediction or no words remain
   - The prediction is displayed below the "Predicted word" header
 
 Prediction Algorithm
@@ -45,7 +45,7 @@ This slide describes how the prediction algorithm functions. At this point of th
 - A loop is run based on the number of tokens
   - The lookup table is filtered so that the first column matches the first token, the second column matches the second token, and so on
   - After all columns are matched the filtered table is returned from the function. The first row in the table is considered to be the final prediction
-  - If after filtering the table it has no rows left (no matching n-grams) the first token is removed and the algorithm is recursively called. This continues until a prediction can be made or there are no tokens remaining. If no tokens are left a null value is returned
+  - If after filtering the table no rows are left (no matching n-grams) the first token is removed and the algorithm is recursively called. This continues until a prediction can be made or there are no tokens remaining. If no tokens are left a null value is returned
   
 ***
   
