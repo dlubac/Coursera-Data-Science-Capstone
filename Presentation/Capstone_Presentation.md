@@ -1,3 +1,13 @@
+<style>
+h3 {
+  font-size:36px !important;
+}
+
+p, li {
+  font-size:24px !important;
+}
+</style>
+
 Data Science Capstone Presentation
 ========================================================
 author: Matt Dlubac

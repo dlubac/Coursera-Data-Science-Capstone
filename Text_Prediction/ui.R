@@ -33,7 +33,8 @@ shinyUI(
              h4("Application Usage"),
              p("To receive a prediction enter your phrase in the textbox and click the \"Predict\" button. The output will be displayed below the \"Predicted Word\" header."),
              br(),
-             a("Github Repository", href="https://github.com/dlubac/Coursera-Data-Science-Capstone", target="_blank")
+             p(a("Github Repository", href="https://github.com/dlubac/Coursera-Data-Science-Capstone", target="_blank")),
+             p(a("Presentation", href="https://dlubac.github.io/Coursera-Data-Science-Capstone/Presentation/Capstone_Presentation.html#/", target="_blank"))
              
              )
   )
